@@ -1,12 +1,9 @@
-export interface MarkerImage {
-  id: string;
-  uri: string;
-}
+import type { markers, markerImages } from './database/schema';
 
-export interface MapMarker {
-  id: string;
-  latitude: number;
-  longitude: number;
+export type MarkerImage = typeof markerImages.$inferSelect;
+type MarkerRow = typeof markers.$inferSelect;
+
+export interface MapMarker extends MarkerRow {
   images: MarkerImage[];
 }
 

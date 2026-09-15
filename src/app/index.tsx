@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Button, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-import { useMarkers } from '../context/markers-context';
+import { useDatabase } from '../context/database-context';
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return (
@@ -15,7 +15,7 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
 }
 
 export default function MapScreen() {
-  const { markers, addMarker } = useMarkers();
+  const { markers, addMarker, isLoading } = useDatabase();
   const [attempt, setAttempt] = useState(0);
   const [ready, setReady] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
@@ -32,9 +32,16 @@ export default function MapScreen() {
     setAttempt((current) => current + 1);
   }
 
-  function openMarker(id: string) {
+  async function createMarker(coordinate: { latitude: number; longitude: number }) {
+    if (isLoading) return;
     try {
-      router.push({ pathname: '/marker/[id]', params: { id } });
+      await addMarker(coordinate.latitude, coordinate.longitude);
+    } catch {}
+  }
+
+  function openMarker(id: number) {
+    try {
+      router.push({ pathname: '/marker/[id]', params: { id: String(id) } });
     } catch {
       Alert.alert('Ошибка', 'Не удалось открыть маркер. Попробуйте ещё раз.');
     }
@@ -45,7 +52,7 @@ export default function MapScreen() {
       <MapView
         key={attempt}
         style={StyleSheet.absoluteFill}
-        onLongPress={(event) => addMarker(event.nativeEvent.coordinate)}
+        onLongPress={(event) => void createMarker(event.nativeEvent.coordinate)}
         onMapReady={() => setReady(true)}
       >
         {markers.map((marker) => (
@@ -58,6 +65,7 @@ export default function MapScreen() {
       </MapView>
       <View style={styles.message}>
         <Text>Удерживайте точку на карте, чтобы добавить маркер. Нажмите на маркер, чтобы открыть фотографии.</Text>
+        {isLoading && <ActivityIndicator accessibilityLabel="Сохранение данных" />}
         {!ready && (timedOut ? (
           <>
             <Text>Карта долго загружается. Проверьте интернет и повторите попытку.</Text>

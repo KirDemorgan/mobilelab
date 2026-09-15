@@ -3,11 +3,16 @@
     "name": "mobile-labs",
     "slug": "mobile-labs",
     "version": "1.0.0",
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "orientation": "portrait",
     "scheme": "mobilelabs",
     "userInterfaceStyle": "light",
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      "expo-sqlite"
+    ],
     "ios": {}
   }
 }

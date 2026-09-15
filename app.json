@@ -6,7 +6,8 @@
     "platforms": ["ios"],
     "orientation": "portrait",
     "scheme": "mobilelabs",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
+    "plugins": ["expo-router"],
     "ios": {}
   }
 }

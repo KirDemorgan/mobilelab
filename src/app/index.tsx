@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, Button, StyleSheet, Text, View } from 'react-
 import MapView, { Marker } from 'react-native-maps';
 
 import { useDatabase } from '../context/database-context';
+import { useLocation } from '../context/location-context';
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return (
@@ -16,6 +17,7 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
 
 export default function MapScreen() {
   const { markers, addMarker, isLoading } = useDatabase();
+  const { location, locationError, notificationError, retry } = useLocation();
   const [attempt, setAttempt] = useState(0);
   const [ready, setReady] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
@@ -55,6 +57,14 @@ export default function MapScreen() {
         onLongPress={(event) => void createMarker(event.nativeEvent.coordinate)}
         onMapReady={() => setReady(true)}
       >
+        {location && (
+          <Marker
+            key="user-location"
+            coordinate={location.coords}
+            title="Вы здесь"
+            pinColor="blue"
+          />
+        )}
         {markers.map((marker) => (
           <Marker
             key={marker.id}
@@ -65,6 +75,9 @@ export default function MapScreen() {
       </MapView>
       <View style={styles.message}>
         <Text>Удерживайте точку на карте, чтобы добавить маркер. Нажмите на маркер, чтобы открыть фотографии.</Text>
+        {locationError && <Text selectable>{locationError}</Text>}
+        {notificationError && <Text selectable>{notificationError}</Text>}
+        {(locationError || notificationError) && <Button title="Повторить GPS и уведомления" onPress={retry} />}
         {isLoading && <ActivityIndicator accessibilityLabel="Сохранение данных" />}
         {!ready && (timedOut ? (
           <>

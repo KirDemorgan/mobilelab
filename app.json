@@ -11,7 +11,14 @@
     "userInterfaceStyle": "light",
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Местоположение нужно для отображения на карте и уведомлений рядом с сохранёнными метками."
+        }
+      ],
+      "expo-notifications"
     ],
     "ios": {}
   }

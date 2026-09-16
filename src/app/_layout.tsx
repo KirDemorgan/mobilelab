@@ -4,12 +4,15 @@ import { ActivityIndicator, Button, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DatabaseProvider, useDatabase } from '../context/database-context';
+import { LocationProvider } from '../context/location-context';
 
 export default function RootLayout() {
   return (
     <DatabaseProvider>
       <StatusBar style="dark" />
-      <DatabaseNavigation />
+      <LocationProvider>
+        <DatabaseNavigation />
+      </LocationProvider>
     </DatabaseProvider>
   );
 }
